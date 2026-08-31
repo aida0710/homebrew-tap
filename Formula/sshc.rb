@@ -6,8 +6,8 @@ class Sshc < Formula
   desc "Manage OpenSSH configuration and connect from one window"
   homepage "https://github.com/aida0710/sshc"
   license "Apache-2.0"
-  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.23.0.tar.gz"
-  sha256 "fdbe0a5ea62f41779d1e102897a543e2bbcc27527845bd81ca0edfd0c0f3075f"
+  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.24.0.tar.gz"
+  sha256 "30873807329f746bcbd170b28c10c8795c194e6f18f88872f771068fab2c650e"
   head "https://github.com/aida0710/sshc.git", branch: "main"
 
   depends_on "go" => :build
@@ -16,6 +16,7 @@ class Sshc < Formula
     # ./cmd/sshc をビルドし、実際のリリースバージョンを埋め込む。
     # -s -w は std_go_args が追加するため重ねて指定しない。
     system "go", "build", *std_go_args(ldflags: "-X main.version=#{version}"), "./cmd/sshc"
+    generate_completions_from_executable(bin/"sshc", "completion")
   end
 
   test do

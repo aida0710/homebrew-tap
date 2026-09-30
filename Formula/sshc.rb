@@ -6,8 +6,8 @@ class Sshc < Formula
   desc "Manage OpenSSH configuration and connect from one window"
   homepage "https://github.com/aida0710/sshc"
   license "Apache-2.0"
-  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.41.0.tar.gz"
-  sha256 "f0fccdb600cf7302285cc591fbadf7a31697233601c5a4f18253dfb95562330c"
+  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.42.0.tar.gz"
+  sha256 "335668a60c31a8421cad6ef75e46c24a4e16d3416e271024da5b42eeeb60ce9f"
   head "https://github.com/aida0710/sshc.git", branch: "main"
 
   depends_on "go" => :build
@@ -15,13 +15,20 @@ class Sshc < Formula
   def install
     # ./cmd/sshc をビルドし、実際のリリースバージョンを埋め込む。
     # -s -w は std_go_args が追加するため重ねて指定しない。
-    system "go", "build", *std_go_args(ldflags: "-X main.version=#{version}"), "./cmd/sshc"
+    system "go", "build", *std_go_args(ldflags: "-X main.version=#{release_version}"), "./cmd/sshc"
     generate_completions_from_executable(bin/"sshc", "completion")
+  end
+
+  # リリースの成果物と make build が埋め込むのと同じ、タグの名前（v0.41.0）を返す。
+  # Homebrew の version はタグから v を除いた値（0.41.0）なので付け直す。
+  # HEAD のビルドにはタグが無いので、Homebrew の version（HEAD-<commit>）のままにする。
+  def release_version
+    version.head? ? version.to_s : "v#{version}"
   end
 
   test do
     # インストール済みバイナリのバージョンを検証する。
-    assert_match "sshc #{version}", shell_output("#{bin}/sshc version")
+    assert_match "sshc #{release_version}", shell_output("#{bin}/sshc version")
 
     # engine が動作していない場合の終了コードとメッセージを検証する。
     output = shell_output("#{bin}/sshc status 2>&1", 1)

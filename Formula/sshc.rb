@@ -6,8 +6,8 @@ class Sshc < Formula
   desc "Manage OpenSSH configuration and connect from one window"
   homepage "https://github.com/aida0710/sshc"
   license "Apache-2.0"
-  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.44.0.tar.gz"
-  sha256 "48b68da6e687d201dbe466b64211f17450c0d7e777a2be28b7613dc65418cdc0"
+  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.44.1.tar.gz"
+  sha256 "a2cee9014a8a7a4546dcba014a32b4b7953fc77322a14f88036b852d7487f7a4"
   head "https://github.com/aida0710/sshc.git", branch: "main"
 
   depends_on "go" => :build

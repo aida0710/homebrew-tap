@@ -6,17 +6,33 @@ class Sshc < Formula
   desc "Manage OpenSSH configuration and connect from one window"
   homepage "https://github.com/aida0710/sshc"
   license "Apache-2.0"
-  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.49.0.tar.gz"
-  sha256 "ce9b931f388b13a5854565fbadafbea96000199c4ac8718feee9be749a3548c3"
+  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.50.0.tar.gz"
+  sha256 "f5979a665add7fe6c0c617e330d39eea20f180cc19e466243b4d18b080bcaa6f"
   head "https://github.com/aida0710/sshc.git", branch: "main"
+
+  # タグのソースアーカイブには .git が無く、Go がコミットとコミット日時
+  # （vcs.revision・vcs.time）を記録できない。release workflow がタグのコミットと
+  # その日時（UTC の RFC 3339）を書き込み、ビルドで渡す。
+  SOURCE_REVISION = "07dedf6dcdfad6e7691d4be33bec2cc67a0dbf94".freeze
+  SOURCE_COMMIT_TIME = "2026-10-19T13:30:23Z".freeze
 
   depends_on "go" => :build
 
   def install
     # ./cmd/sshc をビルドし、実際のリリースバージョンを埋め込む。
     # -s -w は std_go_args が追加するため重ねて指定しない。
-    system "go", "build", *std_go_args(ldflags: "-X main.version=#{release_version}"), "./cmd/sshc"
+    system "go", "build", *std_go_args(ldflags: build_ldflags), "./cmd/sshc"
     generate_completions_from_executable(bin/"sshc", "completion")
+  end
+
+  # HEAD のビルドは git の作業木から Go がコミットを記録するので、タグのコミットを渡さない。
+  def build_ldflags
+    flags = ["-X main.version=#{release_version}"]
+    unless version.head?
+      flags << "-X main.revision=#{SOURCE_REVISION}"
+      flags << "-X main.commitTime=#{SOURCE_COMMIT_TIME}"
+    end
+    flags.join(" ")
   end
 
   # リリースの成果物と make build が埋め込むのと同じ、タグの名前（v0.41.0）を返す。

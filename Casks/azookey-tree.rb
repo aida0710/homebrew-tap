@@ -1,6 +1,6 @@
 cask "azookey-tree" do
-  version "0.2.1"
-  sha256 "a6ab546d8fc46eece60184da107aff8e65f9f2a5b22d50cb27c90f86cd83fb53"
+  version "0.2.2"
+  sha256 "3812cb57361e0a7062fd7447d13182198e1972fcf97b4c8ced8ac5361e9d8170"
 
   url "https://github.com/aida0710/azooKey-Desktop/releases/download/tree-v#{version}/azookey-tree-#{version}-arm64.zip"
   name "azooKey Tree"

@@ -1,24 +1,34 @@
 # aida0710/homebrew-tap へ同期する Formula の正本。
 # release workflow がタグと SHA-256 を更新して tap へ反映する。
-# コミット済みの internal/ui/dist を含むソースから、Node.js なしでビルドする。
+# 画面（internal/ui/dist/app）はリポジトリに入っていないので、Node.js で組み立ててからビルドする。
 # macOS の os/user.Current() に必要なため CGO は無効化しない。
 class Sshc < Formula
   desc "Manage OpenSSH configuration and connect from one window"
   homepage "https://github.com/aida0710/sshc"
   license "Apache-2.0"
-  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.54.0.tar.gz"
-  sha256 "f5e688fb2a6db62512efa75bc402e57fe5c75677766d8885e200145af5581a93"
+  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.55.0.tar.gz"
+  sha256 "4a809f43d93f4dd2f1fd7b637538d4b130bead6b72670ebe7dc2acc72ca2608e"
   head "https://github.com/aida0710/sshc.git", branch: "main"
 
   # タグのソースアーカイブには .git が無く、Go がコミットとコミット日時
   # （vcs.revision・vcs.time）を記録できない。release workflow がタグのコミットと
   # その日時（UTC の RFC 3339）を書き込み、ビルドで渡す。
-  SOURCE_REVISION = "0f2adc5718c6eea4a981091e87dbe9708b0ce97d".freeze
-  SOURCE_COMMIT_TIME = "2026-10-23T19:13:07Z".freeze
+  SOURCE_REVISION = "df0779af5b87c5ee06805a9d7c6dab9455b959dd".freeze
+  SOURCE_COMMIT_TIME = "2026-10-26T18:59:04Z".freeze
 
   depends_on "go" => :build
+  # 画面は CI・リリースと同じ Node 22 で組み立てる。Node が違うと組み立ての結果が変わる。
+  depends_on "node@22" => :build
 
   def install
+    # 埋め込む画面を組み立てる。npm は web/ の中で走らせる（--prefix は下位命令ごとに意味が違う）。
+    # node@22 は keg-only なので、その bin を PATH の先頭に置く。
+    ENV.prepend_path "PATH", Formula["node@22"].opt_bin
+    cd "web" do
+      system "npm", "ci", *std_npm_args(prefix: false)
+      system "npm", "run", "build"
+    end
+
     # ./cmd/sshc をビルドし、実際のリリースバージョンを埋め込む。
     # -s -w は std_go_args が追加するため重ねて指定しない。
     system "go", "build", *std_go_args(ldflags: build_ldflags), "./cmd/sshc"

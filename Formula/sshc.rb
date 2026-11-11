@@ -6,15 +6,15 @@ class Sshc < Formula
   desc "Manage OpenSSH configuration and connect from one window"
   homepage "https://github.com/aida0710/sshc"
   license "Apache-2.0"
-  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.66.1.tar.gz"
-  sha256 "8b3a66e0c3e85ecbcbf00b49e6cf207d42e86c11fe14a6552117b6b84d416c66"
+  url "https://github.com/aida0710/sshc/archive/refs/tags/v0.66.2.tar.gz"
+  sha256 "5a3f017cf2f2c67523a1bccac72a67188adf878d847c47e3f55699684defb1d3"
   head "https://github.com/aida0710/sshc.git", branch: "main"
 
   # タグのソースアーカイブには .git が無く、Go がコミットとコミット日時
   # （vcs.revision・vcs.time）を記録できない。release workflow がタグのコミットと
   # その日時（UTC の RFC 3339）を書き込み、ビルドで渡す。
-  SOURCE_REVISION = "dab74ab53d9d302127f7cf2865ee990a961323d7".freeze
-  SOURCE_COMMIT_TIME = "2026-11-11T05:20:04Z".freeze
+  SOURCE_REVISION = "2bf91b4f9b3b357496555b3b6858a7197d0bf1f6".freeze
+  SOURCE_COMMIT_TIME = "2026-11-11T12:27:07Z".freeze
 
   depends_on "go" => :build
   # 画面は CI・リリースと同じ Node 22 で組み立てる。Node が違うと組み立ての結果が変わる。
